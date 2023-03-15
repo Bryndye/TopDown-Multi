@@ -2,11 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using Unity.Multiplayer.Tools.NetStatsMonitor;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Animations;
 using UnityEngine.InputSystem;
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovement : NetworkBehaviour
 {
     private Rigidbody2D rb;
     public Transform MyCamera;
@@ -46,13 +47,14 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Movement();
+        MovementServerRpc();
     }
 
     /// <summary>
     /// FUNCTIONS TO MOVE YOUR ASS
     /// </summary>
-    private void Movement()
+    [ServerRpc]
+    private void MovementServerRpc()
     {
         rb.AddForce(inputZQSD * forceMove * Time.fixedDeltaTime, ForceMode2D.Force);
     }
@@ -65,10 +67,18 @@ public class PlayerMovement : MonoBehaviour
     public void OnMove(InputAction.CallbackContext context)
     {
         //Debug.Log(context.phase);
+        if (!IsOwner)
+        {
+            return;
+        }
         inputZQSD = context.ReadValue<Vector2>();
     }
     public void LookMouse(InputAction.CallbackContext context)
     {
+        if (!IsOwner)
+        {
+            return;
+        }
         Vector2 mousePosition = context.ReadValue<Vector2>();
         Vector2 worldMousePosition = Camera.main.ScreenToWorldPoint(mousePosition);
         Vector2 target = worldMousePosition - (Vector2)transform.position;
