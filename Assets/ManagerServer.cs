@@ -10,16 +10,16 @@ public class ManagerServer : NetworkBehaviour
     public Transform ObjectPrefabToInstantiate;
     bool did = false;
 
-    void Update()
-    {
-        if (!IsServer)
-            { return; }
-        if (did)
-            return;
-        var T =  Instantiate(ObjectPrefabToInstantiate);
-        T.GetComponent<NetworkObject>().Spawn(true);
-        //Despawn existe 
-        did = true;
-        Destroy(T.gameObject);
-    }
+    //void Update()
+    //{
+    //    if (!IsServer)
+    //        { return; }
+    //    if (did)
+    //        return;
+    //    var T =  Instantiate(ObjectPrefabToInstantiate);
+    //    T.GetComponent<NetworkObject>().Spawn(true);
+    //    //Despawn existe 
+    //    did = true;
+    //    //Destroy(T.gameObject);
+    //}
 }
