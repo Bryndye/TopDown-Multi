@@ -13,14 +13,19 @@ public class PlayerMovement : NetworkBehaviour
     public Transform MyCamera;
     public Transform Turret;
 
-    //[Header("Health")]
-    //public int LifeMax = 100;
-    //public int CurrentLife = 100;
-    //private bool isInvincible = false;
-    //private int invincibleTime = 1;
-    //float timerInv = 0;
-    //[SerializeField] private TextMeshProUGUI healthText;
-    //[SerializeField] private GameObject deathScreen;
+    //Chaque variable Network doivent etre init sinon ERROR
+    public NetworkVariable<int> score = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+
+    // Pas le droit d'uitiliser les functions "classiques" => awake ou start pour les variables Network mais celles des varNetwork par override
+    public override void OnNetworkSpawn()
+    {
+        score.OnValueChanged += (int previousValue, int newValue) =>
+        {
+            Debug.Log(OwnerClientId + " " + score.Value.ToString());
+        };
+    }
+
+    // IsOwner permet de savoir si l'objet est au joueur donc a utilisé pour les inputs
 
     [Header("Movement")]
     private Vector2 inputZQSD;
@@ -30,38 +35,25 @@ public class PlayerMovement : NetworkBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        //CurrentLife = LifeMax;
     }
 
     void Update()
     {
-        //if (!InCinematic)
-        //{
-        //    //if (isInvincible)
-        //    //{
-        //    //    ResetInvincible();
-        //    //}
-        //}
-        //HealthText();
+
     }
 
     private void FixedUpdate()
     {
-        MovementServerRpc();
+        Movement();
     }
 
-    /// <summary>
-    /// FUNCTIONS TO MOVE YOUR ASS
-    /// </summary>
-    [ServerRpc]
-    private void MovementServerRpc()
+
+    private void Movement()
     {
-        rb.AddForce(inputZQSD * forceMove * Time.fixedDeltaTime, ForceMode2D.Force);
+        rb.velocity = inputZQSD * forceMove * Time.fixedDeltaTime;
     }
 
-    /// <summary>
-    /// INPUTS VALUES GET
-    /// </summary>
+
     #region Handler
     //context.phase = Started performed canceled
     public void OnMove(InputAction.CallbackContext context)
@@ -85,67 +77,18 @@ public class PlayerMovement : NetworkBehaviour
 
         float angle = 0;
 
-        //Vector2 relative = Turret.InverseTransformPoint(mousePosition);
         angle = Mathf.Atan2(target.y, target.x)* Mathf.Rad2Deg;
         Turret.rotation = Quaternion.Euler(0, 0, angle -90);
-        //Turret.Rotate(0, 0, -angle);
     }
 
-    #endregion
-
-
-
-    private void OnCollisionEnter2D(Collision2D collision)
+    // FCT TO TEST NETWORKVARIABLE
+    public void AddScoreTest()
     {
-        //if (collision.gameObject.layer == 6)
-        //{
-        //    TakeDamage();
-        //}
+        Debug.Log(OwnerClientId + ' ' + score.ToString());
+        if (IsOwner)
+        {
+            score.Value++;
+        }
     }
-
-    /// <summary>
-    /// HEALTH
-    /// </summary>
-    //private void HealthText()
-    //{
-    //    healthText.text = ((float)CurrentLife / LifeMax) * 100 + "%";          
-    //    healthText.color = (float)CurrentLife / LifeMax > 0.3f? Color.green : Color.red;
-    //}
-
-    //public void TakeDamage()
-    //{
-    //    if (isInvincible)
-    //    {
-    //        return;
-    //    }
-    //    if (rb.velocity.magnitude / 1 > 0f)
-    //    {
-    //        isInvincible = true;
-    //        CurrentLife -= 10;
-    //        camAnim.SetTrigger("shake");
-    //    }
-
-    //    if (CurrentLife <= 0)
-    //    {
-    //        deathScreen.SetActive(true);
-    //    }
-    //}
-
-
-    //private void ResetInvincible()
-    //{
-    //    timerInv += Time.deltaTime;
-
-    //    if (timerInv > invincibleTime)
-    //    {
-    //        isInvincible = false;
-    //        timerInv = 0;
-    //    }
-    //}
-
-    //public void Respawn()
-    //{
-    //    CurrentLife = LifeMax;
-    //    deathScreen.SetActive(false);
-    //}
+    #endregion
 }
