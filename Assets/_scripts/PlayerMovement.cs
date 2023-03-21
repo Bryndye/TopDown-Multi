@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.Multiplayer.Tools.NetStatsMonitor;
 using Unity.Netcode;
+using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
 using UnityEngine.Animations;
 using UnityEngine.InputSystem;
@@ -39,7 +40,12 @@ public class PlayerMovement : NetworkBehaviour
 
     void Update()
     {
-
+        if (IsOwner)
+        {
+            //AddScoreTestServerRpc("Ca gaz jules roualt?");
+            //AddScoreTestServerRpc(new ServerRpcParams());
+            TestClientRpc(Random.Range(0,10));
+        }
     }
 
     private void FixedUpdate()
@@ -88,7 +94,37 @@ public class PlayerMovement : NetworkBehaviour
         if (IsOwner)
         {
             score.Value++;
+            TestToClientSpecificClientRpc(new ClientRpcParams { Send = new ClientRpcSendParams { TargetClientIds = new List<ulong> { 0 } } });
         }
+    }
+
+    // fcts ServerRPC servent a appeler des fcts au Server donc les clients ne recevront pas lappel
+    [ServerRpc]
+    public void TestServerRpc(string message)
+    {
+        // seul le owner peut call server
+        Debug.Log(OwnerClientId + " fct rpc call : "+message);
+    }
+
+    // ServerRpcParams -> SenderClientId sert aussi à montrer qui call
+    [ServerRpc]
+    public void AddScoreTestServerRpc(ServerRpcParams paramsRpc)
+    {
+        // seul le owner peut call server
+        Debug.Log(OwnerClientId + " fct rpc call : " + paramsRpc.Receive.SenderClientId);
+    }
+
+    // fcts Server -> Clients
+    [ClientRpc]
+    public void TestClientRpc(int a)
+    {
+        Debug.Log(OwnerClientId + " fct rpc call Client" + a);
+    }
+
+    [ClientRpc]
+    public void TestToClientSpecificClientRpc(ClientRpcParams paramsRpc)
+    {
+        Debug.Log(OwnerClientId + " to " + paramsRpc.Send.TargetClientIds);
     }
     #endregion
 }

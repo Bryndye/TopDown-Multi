@@ -211,7 +211,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!114 &9148860776549110550
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -226,6 +226,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MyCamera: {fileID: 7332850424017932566}
   Turret: {fileID: 6492892869043292317}
+  score:
+    m_InternalValue: 0
   forceMove: 50
 --- !u!1 &1984780653029996221
 GameObject:
@@ -540,7 +542,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6492892869043292317}
-  - component: {fileID: 3544069763883437479}
+  - component: {fileID: 3973759175878458106}
   m_Layer: 0
   m_Name: Turret
   m_TagString: Untagged
@@ -564,7 +566,7 @@ Transform:
   m_Father: {fileID: 8611927162934480}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3544069763883437479
+--- !u!114 &3973759175878458106
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
