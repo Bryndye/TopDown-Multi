@@ -8,6 +8,8 @@ using UnityEngine;
 using UnityEngine.Animations;
 using UnityEngine.InputSystem;
 
+public enum EntityMoveSituation { Idle, Run };
+
 public class PlayerMovement : NetworkBehaviour
 {
     private Rigidbody2D rb;
@@ -19,12 +21,14 @@ public class PlayerMovement : NetworkBehaviour
 
     [Header("Movement")]
     private Vector2 inputZQSD;
+    private EntityMoveSituation moveSituation;
     [SerializeField] private float speed = 10f;
 
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        animator = Turret.GetChild(0).GetComponent<Animator>();
     }
 
     private void Start()
@@ -58,14 +62,17 @@ public class PlayerMovement : NetworkBehaviour
 
         rb.velocity = direction * speed;
 
-        //if (direction.magnitude != 0)
-        //{
-        //    animator.SetTrigger("Run");
-        //}
-        //else if (direction.magnitude == 0)
-        //{
-        //    animator.SetTrigger("Idle");
-        //}
+        if (moveSituation == EntityMoveSituation.Idle && direction.magnitude != 0)
+        {
+            animator.SetTrigger("Run");
+            moveSituation = EntityMoveSituation.Run;
+        }
+
+        else if (moveSituation == EntityMoveSituation.Run && direction.magnitude == 0)
+        {
+            animator.SetTrigger("Idle");
+            moveSituation = EntityMoveSituation.Idle;
+        }
     }
 
 
