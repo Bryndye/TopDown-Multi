@@ -38,7 +38,7 @@ public class LobbyManagerUI : MonoBehaviour
     {
         foreach (Transform playerUI in GetChildren(PlayersList))
         {
-            Destroy(playerUI);
+            Destroy(playerUI.gameObject);
         }
 
         foreach (var lobbyInList in currentLobby.Players)

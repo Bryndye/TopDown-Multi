@@ -85,6 +85,8 @@ public class LobbyManager : MonoBehaviour
 
                 joinedLobby = await LobbyService.Instance.GetLobbyAsync(joinedLobby.Id);
 
+                PrintPlayer(joinedLobby);
+
                 if (!IsPlayerInLobby())
                 {
                     // Player was kicked out of this lobby
