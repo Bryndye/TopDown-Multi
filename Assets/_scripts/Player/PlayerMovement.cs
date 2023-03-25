@@ -33,7 +33,6 @@ public class PlayerMovement : NetworkBehaviour
 
     private void Start()
     {
-        Debug.Log("BOUH avant");
         if (!IsOwner)
         {
             MyCamera.SetActive(false);
